@@ -18,6 +18,98 @@ The Inzo protocol is built upon a set of interoperable smart contracts, each wit
 *(For the MVP, a `PolicyLifecycleManager.sol` was initially envisioned as an on-chain orchestrator. Due to hackathon constraints and compiler limitations in certain IDE environments, this orchestration logic is currently handled by a client-side application/bot. The contracts below are designed to support this client-side orchestration while allowing for a future on-chain orchestrator.)*
 
 ---
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#5E81AC', 'lineColor': '#D8DEE9', 'textColor': '#2E3440', 'actorBorder': '#5E81AC', 'actorBkg': '#ECEFF4'}}}%%
+graph LR
+    subgraph "User Interaction Layer"
+        User["👤 Policyholder / User"]
+        TelegramBot["📱 Telegram Bot / dApp UI"]
+    end
+
+    subgraph "Off-Chain Services & Orchestration"
+        ClientOrchestrator["🤖 Client App/Backend (Bot)<br/>(Orchestrates On-Chain Calls)"]
+        AIServices["🧠 AI Services (ElizaOS / Tavus / Persona)<br/>(KYC, Policy Underwriting AI, Claim AI)"]
+        OracleService["🔑 Oracle Service Backend<br/>(Uses Oracle Private Key)"]
+    end
+
+    subgraph "Polkadot Asset Hub (Westend) - On-Chain"
+        subgraph "Inzo Core Smart Contracts"
+            InzoUSD["💵 InzoUSD (ERC20)<br/>- Balances<br/>- Allowances<br/>- TotalSupply<br/>+ mint()<br/>+ transfer()<br/>+ approve()"]
+            PolicyLedger["📜 PolicyLedger<br/>- policies: map(id=>Policy)<br/>- userPolicies: map(addr=>id[])<br/>- PolicyStatus enum<br/>- RiskTier enum<br/>- CreatePolicyInput struct<br/>+ createPolicy()<br/>+ updatePolicyStatus()<br/>+ getPolicyEssentialDetails()"]
+            ClaimOracleRelay["📡 ClaimOracleRelay<br/>- oracleAddress<br/>- kycVerifiedUsers: map(addr=>bool)<br/>- processedClaims: map(hash=>Decision)<br/>- ClaimDecision struct<br/>+ updateKycStatus()<br/>+ submitClaimDecision()<br/>+ getClaimDecision()"]
+            InsuranceFundManager["🏦 InsuranceFundManager (IFM)<br/>- inzoUSDToken (IERC20)<br/>- totalPremiumsCollected<br/>- totalClaimsPaidOut<br/>+ collectPremium()<br/>+ processClaimPayout()"]
+        end
+        subgraph "Future On-Chain Components"
+            InzoGovToken["🗳️ INZO Gov & Staking Token (Future)<br/>- Governance Logic<br/>- Staking Pools<br/>- Fee Distribution"]
+            DecentralizedOracles["🌐 Decentralized Oracle Network (Future)"]
+            XCMIntegration["🔗 XCM Integration Point (Future)"]
+            IdentityPallets["🆔 Polkadot Identity Pallets (Future)"]
+        end
+    end
+
+    %% Interactions & Flows
+    User --o TelegramBot;
+
+    TelegramBot -->|1. User Input| ClientOrchestrator;
+    
+    %% KYC Flow
+    ClientOrchestrator -->|2a. Initiate KYC (Doc/Selfie)| AIServices;
+    AIServices -->|2b. Verification Link| TelegramBot;
+    User -->|2c. Completes Verification| AIServices;
+    ClientOrchestrator -->|2d. Initiate KYC (AI Call)| AIServices;
+    AIServices -->|2e. AI Call Link| TelegramBot;
+    User -->|2f. Completes AI Call| AIServices;
+    AIServices -->|3. KYC Result| OracleService;
+    OracleService -->|4. updateKycStatus(inzoWallet, true)| ClaimOracleRelay;
+    ClientOrchestrator -->|5. Mint InzoUSD to New InzoWallet| InzoUSD;
+
+    %% Policy Application Flow
+    ClientOrchestrator -->|6a. Initiate Policy AI Call| AIServices;
+    AIServices -->|6b. Policy AI Call Link| TelegramBot;
+    User -->|6c. Completes Policy AI Call| AIServices;
+    ClientOrchestrator -->|7. createPolicy(input)| PolicyLedger;
+    
+    %% Premium Payment Flow
+    User --via InzoWallet-->|8a. approve(IFM_address, amount)| InzoUSD;
+    ClientOrchestrator --uses InzoWallet as payer-->|8b. collectPremium(policyId, userInzoWallet, amount)| InsuranceFundManager;
+    InsuranceFundManager --transfers-->|8c. InzoUSD (from user to IFM)| InzoUSD;
+    ClientOrchestrator -->|8d. updatePolicyStatus(Active)| PolicyLedger;
+
+    %% Claim Filing & Processing Flow
+    ClientOrchestrator -->|9a. updatePolicyStatus(ClaimUnderReview)| PolicyLedger;
+    ClientOrchestrator -->|9b. Initiate Claim AI Call| AIServices;
+    AIServices -->|9c. Claim AI Call Link| TelegramBot;
+    User -->|9d. Completes Claim AI Call| AIServices;
+    AIServices -->|10. Claim Assessment Result| OracleService;
+    OracleService -->|11. submitClaimDecision(...)| ClaimOracleRelay;
+    ClientOrchestrator -->|12a. getClaimDecision()| ClaimOracleRelay;
+    ClientOrchestrator -->|12b. processClaimPayout(...)| InsuranceFundManager;
+    InsuranceFundManager --transfers-->|12c. InzoUSD (from IFM to user)| InzoUSD;
+    ClientOrchestrator -->|12d. updatePolicyStatus(ClaimPaid/Rejected)| PolicyLedger;
+
+    %% General Contract Interactions
+    PolicyLedger -- Stores/Reads --> InzoUSD["(premium/coverage amounts)"];
+    InsuranceFundManager -- Interacts with --> InzoUSD;
+    
+    %% Future Interactions
+    InzoGovToken -.-> PolicyLedger  : "Influences Parameters";
+    InzoGovToken -.-> InsuranceFundManager : "Influences Risk Pools/Fees";
+    PolicyLedger <-.-> XCMIntegration : "Cross-Chain Data/Assets";
+    ClaimOracleRelay <-.-> IdentityPallets : "Leverage On-Chain ID";
+    ClaimOracleRelay <-.-> DecentralizedOracles : "Receive Verified Data";
+
+    %% Styling (Optional, might depend on renderer)
+    style User fill:#D8DEE9,stroke:#4C566A,stroke-width:2px
+    style TelegramBot fill:#E5E9F0,stroke:#4C566A,stroke-width:2px
+    style ClientOrchestrator fill:#BF616A,stroke:#2E3440,color:white
+    style AIServices fill:#A3BE8C,stroke:#2E3440,color:black
+    style OracleService fill:#EBCB8B,stroke:#2E3440,color:black
+    style InzoUSD fill:#B48EAD,stroke:#2E3440,color:white
+    style PolicyLedger fill:#88C0D0,stroke:#2E3440,color:black
+    style ClaimOracleRelay fill:#81A1C1,stroke:#2E3440,color:white
+    style InsuranceFundManager fill:#5E81AC,stroke:#2E3440,color:white
+    style InzoGovToken fill:#D08770,stroke:#2E3440,color:white
+```
 
 ## 📄 Contract Details & Functionality
 
