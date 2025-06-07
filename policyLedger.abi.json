@@ -1,0 +1,544 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "initialOwner",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "policyId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "policyHolder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "coverageAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "premiumAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "PolicyCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "policyId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum PolicyLedger.PolicyStatus",
+				"name": "newStatus",
+				"type": "uint8"
+			}
+		],
+		"name": "PolicyStatusUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "policyId",
+				"type": "uint256"
+			}
+		],
+		"name": "PolicyTermsUpdated",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "policyHolder",
+						"type": "address"
+					},
+					{
+						"internalType": "enum PolicyLedger.RiskTier",
+						"name": "riskTier",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "premiumAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverageAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "startDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "endDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "assetIdentifier",
+						"type": "string"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "policyDetailsHash",
+						"type": "bytes32"
+					}
+				],
+				"internalType": "struct PolicyLedger.CreatePolicyInput",
+				"name": "_input",
+				"type": "tuple"
+			}
+		],
+		"name": "createPolicy",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getNextPolicyId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPolicyAssetIdentifier",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPolicyEssentialDetails",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "policyId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "policyHolder",
+				"type": "address"
+			},
+			{
+				"internalType": "enum PolicyLedger.PolicyStatus",
+				"name": "currentStatus",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "coverageAmount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPolicyFinancialTerms",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "premium",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "coverage",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum PolicyLedger.RiskTier",
+				"name": "riskTier",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPolicyStatus",
+		"outputs": [
+			{
+				"internalType": "enum PolicyLedger.PolicyStatus",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			}
+		],
+		"name": "getUserPolicyIds",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "policies",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "policyId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "policyHolder",
+				"type": "address"
+			},
+			{
+				"internalType": "enum PolicyLedger.PolicyStatus",
+				"name": "currentStatus",
+				"type": "uint8"
+			},
+			{
+				"internalType": "enum PolicyLedger.RiskTier",
+				"name": "riskTier",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "premiumAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "coverageAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "startDate",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "endDate",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "assetIdentifier",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "policyDetailsHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "creationTimestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lastUpdateTimestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "policyLifecycleManagerAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_managerAddress",
+				"type": "address"
+			}
+		],
+		"name": "setPolicyLifecycleManager",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalActivePolicies",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum PolicyLedger.PolicyStatus",
+				"name": "_newStatus",
+				"type": "uint8"
+			}
+		],
+		"name": "updatePolicyStatus",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_policyId",
+				"type": "uint256"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "newPremiumAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newCoverageAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newEndDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "newAssetIdentifier",
+						"type": "string"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "newPolicyDetailsHash",
+						"type": "bytes32"
+					}
+				],
+				"internalType": "struct PolicyLedger.UpdatePolicyTermsInput",
+				"name": "_termsInput",
+				"type": "tuple"
+			}
+		],
+		"name": "updatePolicyTerms",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "userPolicies",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
