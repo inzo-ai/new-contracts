@@ -28,7 +28,7 @@ graph LR
 
     subgraph "Off-Chain Services & Orchestration"
         ClientOrchestrator["🤖 Client App/Backend (Bot)<br/>(Orchestrates On-Chain Calls)"]
-        AIServices["🧠 AI Services (ElizaOS / Tavus / Persona)<br/>(KYC, Policy Underwriting AI, Claim AI)"]
+        AIServices["🧠 AI Services (ElizaOS / Tavus / Identity Verification)<br/>(KYC, Policy Underwriting AI, Claim AI)"]
         OracleService["🔑 Oracle Service Backend<br/>(Uses Oracle Private Key)"]
     end
 
@@ -50,46 +50,46 @@ graph LR
     %% Interactions & Flows
     User --o TelegramBot;
 
-    TelegramBot -->|1. User Input| ClientOrchestrator;
+    TelegramBot -->|"1. User Input"| ClientOrchestrator;
     
     %% KYC Flow
-    ClientOrchestrator -->|2a. Initiate KYC (Doc/Selfie)| AIServices;
-    AIServices -->|2b. Verification Link| TelegramBot;
-    User -->|2c. Completes Verification| AIServices;
-    ClientOrchestrator -->|2d. Initiate KYC (AI Call)| AIServices;
-    AIServices -->|2e. AI Call Link| TelegramBot;
-    User -->|2f. Completes AI Call| AIServices;
-    AIServices -->|3. KYC Result| OracleService;
-    OracleService -->|4. updateKycStatus(inzoWallet, true)| ClaimOracleRelay;
-    ClientOrchestrator -->|5. Mint InzoUSD to New InzoWallet| InzoUSD;
+    ClientOrchestrator -->|"2a. Initiate KYC (Doc/Selfie)"| AIServices;
+    AIServices -->|"2b. Verification Link"| TelegramBot;
+    User -->|"2c. Completes Verification"| AIServices;
+    ClientOrchestrator -->|"2d. Initiate KYC (AI Call)"| AIServices;
+    AIServices -->|"2e. AI Call Link"| TelegramBot;
+    User -->|"2f. Completes AI Call"| AIServices;
+    AIServices -->|"3. KYC Result"| OracleService;
+    OracleService -->|"4. updateKycStatus(inzoWallet, true)"| ClaimOracleRelay;
+    ClientOrchestrator -->|"5. Mint InzoUSD to New InzoWallet"| InzoUSD;
 
     %% Policy Application Flow
-    ClientOrchestrator -->|6a. Initiate Policy AI Call| AIServices;
-    AIServices -->|6b. Policy AI Call Link| TelegramBot;
-    User -->|6c. Completes Policy AI Call| AIServices;
-    ClientOrchestrator -->|7. createPolicy(input)| PolicyLedger;
+    ClientOrchestrator -->|"6a. Initiate Policy AI Call"| AIServices;
+    AIServices -->|"6b. Policy AI Call Link"| TelegramBot;
+    User -->|"6c. Completes Policy AI Call"| AIServices;
+    ClientOrchestrator -->|"7. createPolicy(input)"| PolicyLedger;
     
     %% Premium Payment Flow
-    User --via InzoWallet-->|8a. approve(IFM_address, amount)| InzoUSD;
-    ClientOrchestrator --uses InzoWallet as payer-->|8b. collectPremium(policyId, userInzoWallet, amount)| InsuranceFundManager;
-    InsuranceFundManager --transfers-->|8c. InzoUSD (from user to IFM)| InzoUSD;
-    ClientOrchestrator -->|8d. updatePolicyStatus(Active)| PolicyLedger;
+    User --via InzoWallet-->|"8a. approve(IFM_address, amount)"| InzoUSD;
+    ClientOrchestrator --uses InzoWallet as payer-->|"8b. collectPremium(policyId, userInzoWallet, amount)"| InsuranceFundManager;
+    InsuranceFundManager --transfers-->|"8c. InzoUSD (from user to IFM)"| InzoUSD;
+    ClientOrchestrator -->|"8d. updatePolicyStatus(Active)"| PolicyLedger;
 
     %% Claim Filing & Processing Flow
-    ClientOrchestrator -->|9a. updatePolicyStatus(ClaimUnderReview)| PolicyLedger;
-    ClientOrchestrator -->|9b. Initiate Claim AI Call| AIServices;
-    AIServices -->|9c. Claim AI Call Link| TelegramBot;
-    User -->|9d. Completes Claim AI Call| AIServices;
-    AIServices -->|10. Claim Assessment Result| OracleService;
-    OracleService -->|11. submitClaimDecision(...)| ClaimOracleRelay;
-    ClientOrchestrator -->|12a. getClaimDecision()| ClaimOracleRelay;
-    ClientOrchestrator -->|12b. processClaimPayout(...)| InsuranceFundManager;
-    InsuranceFundManager --transfers-->|12c. InzoUSD (from IFM to user)| InzoUSD;
-    ClientOrchestrator -->|12d. updatePolicyStatus(ClaimPaid/Rejected)| PolicyLedger;
+    ClientOrchestrator -->|"9a. updatePolicyStatus(ClaimUnderReview)"| PolicyLedger;
+    ClientOrchestrator -->|"9b. Initiate Claim AI Call"| AIServices;
+    AIServices -->|"9c. Claim AI Call Link"| TelegramBot;
+    User -->|"9d. Completes Claim AI Call"| AIServices;
+    AIServices -->|"10. Claim Assessment Result"| OracleService;
+    OracleService -->|"11. submitClaimDecision(...)"| ClaimOracleRelay;
+    ClientOrchestrator -->|"12a. getClaimDecision()"| ClaimOracleRelay;
+    ClientOrchestrator -->|"12b. processClaimPayout(...)"| InsuranceFundManager;
+    InsuranceFundManager --transfers-->|"12c. InzoUSD (from IFM to user)"| InzoUSD;
+    ClientOrchestrator -->|"12d. updatePolicyStatus(ClaimPaid/Rejected)"| PolicyLedger;
 
     %% General Contract Interactions
-    PolicyLedger -- Stores/Reads --> InzoUSD["(premium/coverage amounts)"];
-    InsuranceFundManager -- Interacts with --> InzoUSD;
+    PolicyLedger -- "Stores/Reads<br/>(premium/coverage amounts)" --> InzoUSD;
+    InsuranceFundManager -- "Interacts with" --> InzoUSD;
     
     %% Future Interactions
     InzoGovToken -.-> PolicyLedger  : "Influences Parameters";
