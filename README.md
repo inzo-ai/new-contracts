@@ -7,8 +7,7 @@ To showcase the future vision of the Inzo protocol beyond the core MVP, two new 
 This contract demonstrates the mechanism for a decentralized, yield-bearing capital pool where the community can underwrite the protocol's insurance risk.
 
 - **Purpose:** To allow `InzoUSD` holders to stake their tokens and earn a share of the protocol's premium income, forming a resilient and scalable treasury.
-- **Deployed Address:** [`0x4c26a70c7d3A185f8f43570567C4bE84113765D9`](https://westend-assethub.subscan.io/evm_contract/0x4c26a70c7d3A185f8f43570567C4bE84113765D9)
-- **Live Demo:** [Link to your Vercel Staking dApp]
+- **Deployed Address:** [`0x4c26a70c7d3A185f8f43570567C4bE84113765D9`]
 - **Key Functions:**
   - `stake(amount)`: Allows users to deposit `InzoUSD` into the pool after an `approve` call.
   - `withdraw(amount)`: Allows users to retrieve their principal stake.
@@ -21,8 +20,7 @@ This contract demonstrates the mechanism for a decentralized, yield-bearing capi
 This contract provides a simple but powerful mechanism for token-based governance, allowing the community to signal their preferences on key protocol decisions.
 
 - **Purpose:** To use a user's `InzoUSD` balance as voting power to decide the outcome of on-chain proposals.
-- **Deployed Address:** [`0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd`](https://westend-assethub.subscan.io/evm_contract/0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd)
-- **Live Demo:** [Link to your Vercel Governance dApp]
+- **Deployed Address:** [`0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd`]
 - **Key Functions:**
   - `createPoll(description)`: An `onlyOwner` function to create new proposals. For the demo, proposals are created via the dashboard.
   - `vote(pollId, inFavor)`: Allows any user holding `InzoUSD` to cast a vote. Their vote's weight is equal to their token balance at the time of voting.
