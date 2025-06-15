@@ -1,3 +1,37 @@
+## 💎 New Contracts for Finale: Demonstrating Staking & Governance
+
+To showcase the future vision of the Inzo protocol beyond the core MVP, two new standalone contracts have been developed and deployed. These modules demonstrate the key tokenomic pillars of **staking for a decentralized capital pool** and **on-chain governance** using the native `InzoUSD` token. They are presented as live, interactive "feature previews."
+
+### 5. InzoStake.sol - The Future Capital Pool 🏦
+
+This contract demonstrates the mechanism for a decentralized, yield-bearing capital pool where the community can underwrite the protocol's insurance risk.
+
+- **Purpose:** To allow `InzoUSD` holders to stake their tokens and earn a share of the protocol's premium income, forming a resilient and scalable treasury.
+- **Deployed Address:** [`0x4c26a70c7d3A185f8f43570567C4bE84113765D9`](https://westend-assethub.subscan.io/evm_contract/0x4c26a70c7d3A185f8f43570567C4bE84113765D9)
+- **Live Demo:** [Link to your Vercel Staking dApp]
+- **Key Functions:**
+  - `stake(amount)`: Allows users to deposit `InzoUSD` into the pool after an `approve` call.
+  - `withdraw(amount)`: Allows users to retrieve their principal stake.
+  - `claimReward()`: Allows users to claim the `InzoUSD` rewards they have earned over time.
+  - `addRewards(amount)`: An `onlyOwner` function for the demo that simulates premium income being added to the reward pool. In a full integration, this would be called by the `InsuranceFundManager`.
+- **Significance:** This contract proves the viability of a decentralized underwriting model, a critical step towards creating a self-sustaining, community-owned insurance protocol. It transitions the capital source from a simple treasury to an active, yield-bearing DeFi primitive.
+
+### 6. InzoPoll.sol - Lightweight On-Chain Governance 🗳️
+
+This contract provides a simple but powerful mechanism for token-based governance, allowing the community to signal their preferences on key protocol decisions.
+
+- **Purpose:** To use a user's `InzoUSD` balance as voting power to decide the outcome of on-chain proposals.
+- **Deployed Address:** [`0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd`](https://westend-assethub.subscan.io/evm_contract/0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd)
+- **Live Demo:** [Link to your Vercel Governance dApp]
+- **Key Functions:**
+  - `createPoll(description)`: An `onlyOwner` function to create new proposals. For the demo, proposals are created via the block explorer.
+  - `vote(pollId, inFavor)`: Allows any user holding `InzoUSD` to cast a vote. Their vote's weight is equal to their token balance at the time of voting.
+  - `polls(pollId)`: A public view function to check the description and current vote tally for any poll.
+- **Significance:** This module demonstrates a clear path to decentralization. By giving `InzoUSD` holders a direct voice in the protocol's evolution, it lays the foundation for a true DAO and fulfills the promise of a community-governed financial safety net.
+
+---
+
+
 # 🛡️ Inzo Protocol: Core Smart Contracts
 
 This repository contains the core Solidity smart contracts that power the Inzo decentralized insurance platform. These contracts are designed to run on Polkadot Asset Hub, leveraging the efficiency and security of PolkaVM. Our architecture prioritizes transparency, modularity, and a clear separation of concerns to build a resilient on-chain foundation for AI-enhanced insurance services.
