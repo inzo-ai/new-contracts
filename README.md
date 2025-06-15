@@ -24,7 +24,7 @@ This contract provides a simple but powerful mechanism for token-based governanc
 - **Deployed Address:** [`0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd`](https://westend-assethub.subscan.io/evm_contract/0x7bD4DF7D89c3664112716b72A22630F0EC61f0Fd)
 - **Live Demo:** [Link to your Vercel Governance dApp]
 - **Key Functions:**
-  - `createPoll(description)`: An `onlyOwner` function to create new proposals. For the demo, proposals are created via the block explorer.
+  - `createPoll(description)`: An `onlyOwner` function to create new proposals. For the demo, proposals are created via the dashboard.
   - `vote(pollId, inFavor)`: Allows any user holding `InzoUSD` to cast a vote. Their vote's weight is equal to their token balance at the time of voting.
   - `polls(pollId)`: A public view function to check the description and current vote tally for any poll.
 - **Significance:** This module demonstrates a clear path to decentralization. By giving `InzoUSD` holders a direct voice in the protocol's evolution, it lays the foundation for a true DAO and fulfills the promise of a community-governed financial safety net.
